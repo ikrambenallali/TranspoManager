@@ -1,71 +1,121 @@
 import Trailer from '../Models/Trailer.js';
 
-
 // create Trailer
-export const createTrailer = async (req, res) => {
+export const createTrailer = async (req, res, next) => {
     try {
         const { matricule, type, capacity, status } = req.body;
 
         const existMatricule = await Trailer.findOne({ matricule });
         if (existMatricule) {
-            return res.status(400).json({ msg: "This matricule already exists." });
+            const error = new Error("This matricule already exists.");
+            error.statusCode = 400;
+            return next(error);
         }
+
         const newTrailer = new Trailer({
             matricule,
             type,
             capacity,
             status,
-        })
+        });
+
         await newTrailer.save();
-        res.status(201).json({ msg: "remorque creer avec succees", Trailer: { matricule: newTrailer.matricule, type: newTrailer.type, capacity: newTrailer.capacity, status: newTrailer.status }, });
+
+        res.status(201).json({
+            msg: "Remorque créée avec succès",
+            trailer: newTrailer
+        });
 
     } catch (error) {
-        res.status(500).json({ msg: "Server error" });
-        console.log(error);
+        next(error);
     }
-}
+};
+
+
 // fetch all Trailers
-export const getAllTrailers = async (req, res) => {
+export const getAllTrailers = async (req, res, next) => {
     try {
-        const Trailers = await Trailer.find();
-        res.status(200).json({ success: true, msg: "voici touts les remorqurs", data: Trailers });
+        const trailers = await Trailer.find();
+        res.status(200).json({
+            success: true,
+            msg: "Voici toutes les remorques",
+            data: trailers
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+
+// fetch Trailer by id 
+export const getTrailerById = async (req, res, next) => {
+    try {
+        const id = req.params.id;
+
+        const trailer = await Trailer.findById(id);
+        if (!trailer) {
+            const error = new Error("Trailer not found");
+            error.statusCode = 404;
+            return next(error);
+        }
+
+        res.status(200).json({
+            success: true,
+            msg: "Voici la remorque",
+            data: trailer
+        });
 
     } catch (error) {
-        console.log(error);
+        next(error);
     }
-}
-// fetch Trailer by id 
-export const getTrailerById = async (req, res) => {
-    try {
-        const id = req.params.id;
-        const trailer = await Trailer.findById(id);
-        res.status(200).json({ success: true, msg: "voici le remorque", data: trailer });
-    } catch (error) {
-        console.log(error);
-        res.status(500).json({ msg: "Server error" });
-    }
-}
+};
+
+
 // delete Trailer 
-export const deleteTrailer = async (req, res) => {
+export const deleteTrailer = async (req, res, next) => {
     try {
         const id = req.params.id;
-        const deleteTrailer = await Trailer.findByIdAndDelete(id);
-        res.status(200).json({ success: true, msg: "remorque supprimé avec succès", data: deleteTrailer });
+
+        const deleted = await Trailer.findByIdAndDelete(id);
+        if (!deleted) {
+            const error = new Error("Trailer not found");
+            error.statusCode = 404;
+            return next(error);
+        }
+
+        res.status(200).json({
+            success: true,
+            msg: "Remorque supprimée avec succès",
+            data: deleted
+        });
+
     } catch (error) {
-        console.log(error);
-        res.status(500).json({ msg: "Server error" });
+        next(error);
     }
-}
+};
+
+
 // update Trailer
-export const updateTrailer =async (req,res)=>{
-    try{
-        const id=req.params.id;
-        const updateTrailer=await Trailer.findByIdAndUpdate(id,req.body,{new:true});
-        res.status(200).json({success:true,msg:"remorque mis à jour avec succès",data:updateTrailer});
-    }catch(error){
-        console.log(error);
-        res.status(500).json({msg:"Server error"});
+export const updateTrailer = async (req, res, next) => {
+    try {
+        const id = req.params.id;
+
+        const updated = await Trailer.findByIdAndUpdate(id, req.body, { new: true });
+        if (!updated) {
+            const error = new Error("Trailer not found");
+            error.statusCode = 404;
+            return next(error);
+        }
+
+        res.status(200).json({
+            success: true,
+            msg: "Remorque mise à jour avec succès",
+            data: updated
+        });
+
+    } catch (error) {
+        next(error);
     }
-}
+};
 
 export default { createTrailer, getAllTrailers, getTrailerById, deleteTrailer, updateTrailer };
