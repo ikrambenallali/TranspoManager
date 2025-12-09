@@ -35,5 +35,17 @@ export const getAllTrucks = async (req,res)=>{
     console.log(error);
     }
 }
+// fetch truck by id 
+export const getTruckById =async(req,res)=>{
+    try {
+        const id = req.params.id;
+        const truck =await Truck.findById(id);
+        res.status(200).json({success:true,msg:"voici le camion",data:truck});
+    } catch (error) {
+        console.log(error);
+        res.status(500).json({msg:"Server error"});
+    }
+}
 
-export default { createTruck ,getAllTrucks};
+
+export default { createTruck ,getAllTrucks, getTruckById};

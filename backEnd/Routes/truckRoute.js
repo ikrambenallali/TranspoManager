@@ -3,7 +3,8 @@ import express from 'express';
 const router = express.Router();
 
 // create truck
-router.post('/create-truck', TruckController.createTruck);
-router.get('/all-trucks', TruckController.getAllTrucks);
+router.post('/', TruckController.createTruck);
+router.get('/', TruckController.getAllTrucks);
+router.get('/:id', TruckController.getTruckById);
 
 export default router;
