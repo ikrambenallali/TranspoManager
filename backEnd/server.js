@@ -4,6 +4,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import authRoutes from './Routes/authRoutes.js';
 import userRoutes from './Routes/userRoutes.js';
+import truckRoutes from './Routes/truckRoute.js';
 import errorHandler from './middlewares/errorHandling.js';
 
 
@@ -22,6 +23,7 @@ app.use(express.json());
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/trucks', truckRoutes);
 
 // Test route
 app.get('/', (req, res) => {
