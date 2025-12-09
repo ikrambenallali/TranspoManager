@@ -23,8 +23,8 @@ if (!loading && !error && useSelector((state) => state.auth.token)) {
     navigate("/DriverDashboard"); 
 }
     return (
-        <div className="p-6 max-w-md mx-auto">
-            <h1 className="text-2xl font-bold mb-4">Login</h1>
+        <div className="p-6 max-w-md mx-auto h-100 mt-32">
+            <h1 className="text-2xl text-orange-500 font-bold mb-4">Login</h1>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">
 
@@ -46,7 +46,7 @@ if (!loading && !error && useSelector((state) => state.auth.token)) {
 
                 <button
                     disabled={loading}
-                    className="bg-blue-600 text-white p-2 rounded"
+                    className="bg-orange-500 text-white p-2 rounded"
                 >
                     {loading ? "Chargement..." : "Se connecter"}
                 </button>
