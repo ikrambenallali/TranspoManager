@@ -26,6 +26,14 @@ export const createTruck = async (req, res) => {
     }
 }
 // fetch all trucks
+export const getAllTrucks = async (req,res)=>{
+    try{
+        const trucks = await Truck.find();
+        res.status(200).json({success:true,msg:"voici touts les camions",data:trucks});
 
+    }catch(error){
+    console.log(error);
+    }
+}
 
-export default { createTruck };
+export default { createTruck ,getAllTrucks};
