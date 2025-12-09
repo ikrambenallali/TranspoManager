@@ -4,6 +4,7 @@ import express from 'express';
 import mongoose from 'mongoose';
 import authRoutes from './Routes/authRoutes.js';
 import userRoutes from './Routes/userRoutes.js';
+import errorHandler from './middlewares/errorHandling.js';
 
 
 
@@ -33,3 +34,4 @@ app.use('/api/users', userRoutes);
 app.get('/', (req, res) => {
     res.send('Hello World !');
 });
+app.use(errorHandler);
