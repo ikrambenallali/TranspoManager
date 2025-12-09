@@ -34,6 +34,7 @@ app.get('/', (req, res) => {
 
 
 
+app.use(errorHandler);
 // Connexion Mongo + lancement du serveur
 mongoose.connect(process.env.DB_URI)
     .then(() => {
@@ -41,4 +42,3 @@ mongoose.connect(process.env.DB_URI)
         app.listen(port, () => console.log(`🚀 Serveur sur http://localhost:${port}`));
     })
     .catch(err => console.error('❌ Erreur MongoDB :', err));
-app.use(errorHandler);
