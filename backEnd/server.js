@@ -4,32 +4,33 @@ import express from 'express';
 import mongoose from 'mongoose';
 import authRoutes from './Routes/authRoutes.js';
 import userRoutes from './Routes/userRoutes.js';
-
-
+import cors from "cors";
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Connexion à MongoDB
-const uri = process.env.DB_URI;
-mongoose.connect(uri) // <- plus besoin de options
-.then(() => {
-    console.log('✅ Connecté à MongoDB avec succès !');
-    
-    // Serveur seulement si la DB est connectée
-    app.listen(port, () => {
-        console.log(`🚀 Serveur démarré sur http://localhost:${port}`);
-    });
-})
-.catch((err) => {
-    console.error('❌ Erreur de connexion à MongoDB :', err);
-});
+// Middleware
+app.use(cors({
+    origin: "http://localhost:5173",
+    credentials: true
+}));
 app.use(express.json());
-console.log("JWT_SECRET =", process.env.JWT_SECRET);
 
+// Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
-// Middleware / Routes ici
+
+// Test route
 app.get('/', (req, res) => {
     res.send('Hello World !');
 });
+
+
+
+// Connexion Mongo + lancement du serveur
+mongoose.connect(process.env.DB_URI)
+    .then(() => {
+        console.log('✅ Connecté à MongoDB');
+        app.listen(port, () => console.log(`🚀 Serveur sur http://localhost:${port}`));
+    })
+    .catch(err => console.error('❌ Erreur MongoDB :', err));
