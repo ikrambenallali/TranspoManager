@@ -1,27 +1,31 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../features/authSlice.jsx";
 import { useNavigate } from "react-router-dom";
-
 
 function Auth() {
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
-    // Récupérer loading et error depuis Redux
-    const { loading, error } = useSelector((state) => state.auth);
+    // Redux state
+    const { loading, error, token } = useSelector((state) => state.auth);
 
-    // States locaux pour les inputs
+    // Local states
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        dispatch(login({ email, password }));  
+        dispatch(login({ email, password }));
     };
-if (!loading && !error && useSelector((state) => state.auth.token)) {
-    navigate("/DriverDashboard"); 
-}
+
+    // 🟢 Redirection sécurisée
+    useEffect(() => {
+        if (!loading && token) {
+            navigate("/DriverDashboard");
+        }
+    }, [loading, token, navigate]);
+
     return (
         <div className="p-6 max-w-md mx-auto h-100 mt-32">
             <h1 className="text-2xl text-orange-500 font-bold mb-4">Login</h1>
