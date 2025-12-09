@@ -4,6 +4,9 @@ import express from 'express';
 import mongoose from 'mongoose';
 import authRoutes from './Routes/authRoutes.js';
 import userRoutes from './Routes/userRoutes.js';
+import errorHandler from './middlewares/errorHandling.js';
+
+
 import cors from "cors";
 
 const app = express();
@@ -34,3 +37,4 @@ mongoose.connect(process.env.DB_URI)
         app.listen(port, () => console.log(`🚀 Serveur sur http://localhost:${port}`));
     })
     .catch(err => console.error('❌ Erreur MongoDB :', err));
+app.use(errorHandler);

@@ -30,4 +30,13 @@ export const login = async (req, res) => {
         console.log(error);
     }
 }
-export default { login };
+
+// logout
+export const logout = (req, res) =>{
+     try {
+     res.json({ message: 'Logout successful' });
+  } catch (error) {
+    console.error('Logout error:', error);
+  }
+}
+export default { login, logout };
