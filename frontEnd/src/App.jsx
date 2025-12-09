@@ -9,11 +9,17 @@ function App() {
   console.log("Store:", store.getState());
 
   return (
-    <div className="w-full ">
-      <Navbar />
-    <AppRoutes />
-    <Footer />
-    </div>
+    <div className="flex flex-col min-h-screen">
+  <Navbar />
+
+  {/* Le contenu prend tout l’espace restant */}
+  <main className="flex-grow">
+       <AppRoutes />
+  </main>
+
+  <Footer />
+</div>
+   
   )
 }
 
