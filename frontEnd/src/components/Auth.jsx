@@ -1,8 +1,11 @@
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../features/authSlice.jsx";
+import { useNavigate } from "react-router-dom";
+
 
 function Auth() {
+    const navigate = useNavigate();
     const dispatch = useDispatch();
 
     // Récupérer loading et error depuis Redux
@@ -16,8 +19,9 @@ function Auth() {
         e.preventDefault();
         dispatch(login({ email, password }));  
     };
-console.log("Auth state:", useSelector((state) => state.auth));
-
+if (!loading && !error && useSelector((state) => state.auth.token)) {
+    navigate("/DriverDashboard"); 
+}
     return (
         <div className="p-6 max-w-md mx-auto">
             <h1 className="text-2xl font-bold mb-4">Login</h1>
