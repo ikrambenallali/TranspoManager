@@ -19,7 +19,7 @@ initialState:{
     user: null,
     loading: false,
     error: null,
-    token: null,
+    // token: null,
 },
 extraReducers: (builder) => {
     builder
@@ -30,7 +30,6 @@ extraReducers: (builder) => {
         .addCase(createDriver.fulfilled, (state, action) => {
             state.loading = false;
             state.user = action.payload.user;
-            state.token = action.payload.token;
         })
         .addCase(createDriver.rejected, (state, action) => {
             state.loading = false;
