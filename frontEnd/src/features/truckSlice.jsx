@@ -13,6 +13,17 @@ export const fetchTrucks = createAsyncThunk(
         }
      }
 )
+export const createTruck =createAsyncThunk(
+    "truck/createTruck",
+    async(truckData,{rejectWithValue})=>{
+        try{
+            const res=await api.post("/trucks",truckData);
+            return res.data;
+        }catch(err){
+            return rejectWithValue(err.response?.data?.msg || "erreur lorsque de la creation de camion")
+        }
+    }
+)
 
 const truckSlice =createSlice({
     name:"truck",
@@ -24,6 +35,7 @@ const truckSlice =createSlice({
     },
     extraReducers :(builder)=>{
     builder
+    // fetch 
     .addCase(fetchTrucks.pending ,(state)=>{
         state.loading=true;
     })
@@ -32,6 +44,18 @@ const truckSlice =createSlice({
         state.trucks=action.payload.data;
     })
     .addCase(fetchTrucks.rejected ,(state,action)=>{
+        state.loading=false;
+        state.error=action.payload;
+    })
+    // create 
+    .addCase(createTruck.pending,(state)=>{
+        state.loading=true;
+    })
+    .addCase(createTruck.fulfilled,(state,action)=>{
+        state.loading=false;
+        state.truck=action.payload.truckData;
+    })
+    .addCase(createTruck.rejected,(state,action)=>{
         state.loading=false;
         state.error=action.payload;
     })
