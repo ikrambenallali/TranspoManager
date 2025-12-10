@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Truck, Gauge, Fuel, CheckCircle, Navigation, Wrench, Plus, Edit, Trash2, X } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchTrucks ,createTruck } from '../../features/truckSlice';
+import { fetchTrucks ,createTruck ,deleteTruck } from '../../features/truckSlice';
 
 function Trucks() {
   const dispatch = useDispatch();
@@ -54,6 +54,9 @@ function Trucks() {
     setFormLoading(false);
   };
 
+const handleDelete = (id) => {
+    dispatch(deleteTruck(id));
+};
   if (loading) return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center">
       <div className="text-center">
@@ -165,7 +168,7 @@ function Trucks() {
                   Modifier
                 </button>
                 <button 
-                  onClick={() => console.log('Supprimer:', truck._id)}
+                  onClick={() => handleDelete(truck._id)}
                   className="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2"
                 >
                   <Trash2 size={18} />

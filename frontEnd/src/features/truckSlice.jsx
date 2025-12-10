@@ -24,7 +24,18 @@ export const createTruck =createAsyncThunk(
         }
     }
 )
+export const deleteTruck = createAsyncThunk(
+    "truck/deleteTruck",
+    async (id ,{rejectWithValue})=>{
+        try{
+            const res=await api.delete(`/trucks/${id}`);
+            return id;
 
+        }catch(err){
+          return rejectWithValue(err.response?.data?.msg || "Erreur lors de la suppression du camion");
+        }
+    }
+)
 const truckSlice =createSlice({
     name:"truck",
     initialState:{
@@ -47,6 +58,7 @@ const truckSlice =createSlice({
         state.loading=false;
         state.error=action.payload;
     })
+
     // create 
     .addCase(createTruck.pending,(state)=>{
         state.loading=true;
@@ -60,6 +72,18 @@ const truckSlice =createSlice({
         state.error=action.payload;
     })
 
+    // delete
+    .addCase(deleteTruck.pending,(state)=>{
+        state.loading=true;
+    })
+    .addCase(deleteTruck.fulfilled,(state,action)=>{
+        state.loading=false;
+        state.trucks=state.trucks.filter(t=>t._id!==action.payload);
+    })
+    .addCase(deleteTruck.rejected,(state,action)=>{
+        state.loading=false;
+        state.error=action.payload;
+    })
     }
     
 })
