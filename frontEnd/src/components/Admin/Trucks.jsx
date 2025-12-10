@@ -1,48 +1,161 @@
-import React from 'react';
-import { Truck, Gauge, Fuel, CheckCircle, Navigation, Wrench, Plus, Edit, Trash2 } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Truck, Gauge, Fuel, CheckCircle, Navigation, Wrench, Plus, Edit, Trash2, X, AlertCircle } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { useEffect } from 'react';
-import { fetchTrucks } from '../../features/truckSlice';
-
+import { fetchTrucks, createTruck, deleteTruck, updateTruck } from '../../features/truckSlice';
 
 function Trucks() {
   const dispatch = useDispatch();
-  const {trucks ,loading ,error} =useSelector((state)=>state.truck);
-  useEffect(()=>{
-   dispatch(fetchTrucks());
-  },[])
- console.log(trucks);
- 
-  if(loading) return <div>Loading...</div>;
-  if(error) return <div className="text-red-500">Error: {error}</div>;
-const getStatusColor = (status) => {
-  switch (status) {
-    case "disponible": return "border-green-500 text-green-500";
-    case "maintenance": return "border-yellow-500 text-yellow-500";
-    case "en route": return "border-red-500 text-red-500";
-    default: return "border-gray-500 text-gray-500";
-  }
-};
+  const { trucks, loading, error } = useSelector((state) => state.truck);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    matricule: '',
+    marque: '',
+    kilometrage: 0,
+    carburantCapacity: 0,
+    status: 'disponible'
+  });
 
-const getStatusText = (status) => {
-  switch (status) {
-    case "disponible": return "disponible";
-    case "en route": return "en route";
-    case "maintenance": return "En maintenance";
-    default: return "disponible";
-  }
-};
+  const [formError, setFormError] = useState('');
+  const [formLoading, setFormLoading] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingId, setEditingId] = useState(null);
 
-const getStatusIcon = (status) => {
-  switch (status) {
-    case "disponible": return <CheckCircle size={16} className="text-green-500" />;
-    case "maintenance": return <Wrench size={16} className="text-yellow-500" />;
-    case "en route": return <Navigation size={16} className="text-red-500" />;
-    default: return <Truck size={16} className="text-gray-500" />;
-  }
-};
+  useEffect(() => {
+    dispatch(fetchTrucks());
+  }, [dispatch]);
 
-  
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const openCreateModal = () => {
+    setIsEditing(false);
+    setEditingId(null);
+    setFormData({
+      matricule: '',
+      marque: '',
+      kilometrage: 0,
+      carburantCapacity: 0,
+      status: 'disponible'
+    });
+    setFormError('');
+    setIsModalOpen(true);
+  };
+
+  const openEditModal = (truck) => {
+    setIsEditing(true);
+    setEditingId(truck._id);
+    setFormData({
+      matricule: truck.matricule,
+      marque: truck.marque,
+      kilometrage: truck.kilometrage,
+      carburantCapacity: truck.carburantCapacity,
+      status: truck.status
+    });
+    setFormError('');
+    setIsModalOpen(true);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setFormError('');
+    setFormLoading(true);
+
+    if (isEditing) {
+      const resultAction = await dispatch(
+        updateTruck({ id: editingId, truckData: formData })
+      );
+
+      if (updateTruck.fulfilled.match(resultAction)) {
+        setIsModalOpen(false);
+        setIsEditing(false);
+        setEditingId(null);
+        setFormData({
+          matricule: '',
+          marque: '',
+          kilometrage: 0,
+          carburantCapacity: 0,
+          status: 'disponible'
+        });
+        dispatch(fetchTrucks());
+      } else {
+        setFormError(resultAction.payload || "Erreur lors de la mise à jour");
+      }
+    } else {
+      const resultAction = await dispatch(createTruck(formData));
+      
+      if (createTruck.fulfilled.match(resultAction)) {
+        setFormData({
+          matricule: '',
+          marque: '',
+          kilometrage: 0,
+          carburantCapacity: 0,
+          status: 'disponible'
+        });
+        setIsModalOpen(false);
+        dispatch(fetchTrucks());
+      } else {
+        setFormError(resultAction.payload || 'Erreur lors de la création');
+      }
+    }
+
+    setFormLoading(false);
+  };
+
+  const handleDelete = async (id) => {
+    if (window.confirm('Êtes-vous sûr de vouloir supprimer ce camion ?')) {
+      await dispatch(deleteTruck(id));
+      dispatch(fetchTrucks());
+    }
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setIsEditing(false);
+    setEditingId(null);
+    setFormError('');
+    setFormData({
+      matricule: '',
+      marque: '',
+      kilometrage: 0,
+      carburantCapacity: 0,
+      status: 'disponible'
+    });
+  };
+
+  if (loading) return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-orange-500 mx-auto mb-4"></div>
+        <p className="text-gray-400 text-lg">Chargement des camions...</p>
+      </div>
+    </div>
+  );
+
+  if (error) return (
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center">
+      <div className="text-red-500 text-xl">Error: {error}</div>
+    </div>
+  );
+
+  const getStatusColor = (status) => {
+    switch (status) {
+      case "disponible": return "border-green-500 text-green-500";
+      case "maintenance": return "border-yellow-500 text-yellow-500";
+      case "en route": return "border-red-500 text-red-500";
+      default: return "border-gray-500 text-gray-500";
+    }
+  };
+
+  const getStatusIcon = (status) => {
+    switch (status) {
+      case "disponible": return <CheckCircle size={16} className="text-green-500" />;
+      case "maintenance": return <Wrench size={16} className="text-yellow-500" />;
+      case "en route": return <Navigation size={16} className="text-red-500" />;
+      default: return <Truck size={16} className="text-gray-500" />;
+    }
+  };
+
   return (
     <div className="w-[110%] min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
@@ -55,7 +168,7 @@ const getStatusIcon = (status) => {
             <p className="text-gray-400">Gestion et suivi de tous nos camions</p>
           </div>
           <button 
-            onClick={() => console.log('Créer un camion')}
+            onClick={openCreateModal}
             className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
           >
             <Plus size={20} />
@@ -77,7 +190,7 @@ const getStatusIcon = (status) => {
                 </div>
                 <div className={`flex items-center gap-2 px-3 py-1 rounded-full border ${getStatusColor(truck.status)}`}>
                   {getStatusIcon(truck.status)}
-                  <span className="text-sm font-medium">{getStatusText(truck.status)}</span>
+                  <span className="text-sm font-medium">{truck.status}</span>
                 </div>
               </div>
 
@@ -111,27 +224,164 @@ const getStatusIcon = (status) => {
                 </div>
               </div>
 
-              {/* Actions Buttons */}
-              <div className="mt-4 pt-4 border-t border-gray-700 flex gap-2">
+            {/* Actions Buttons */}
+              <div className="mt-4 pt-4 border-t border-gray-700 flex gap-2 justify-end">
                 <button 
-                  onClick={() => console.log('Modifier:', truck._id)}
-                  className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2"
+                  onClick={() => openEditModal(truck)}
+                  className="p-2 bg-gray-700/50 hover:bg-orange-500/20 border border-gray-600 hover:border-orange-500 text-gray-400 hover:text-orange-500 rounded-lg transition-all duration-300 group"
+                  title="Modifier"
                 >
-                  <Edit size={18} />
-                  Modifier
+                  <Edit size={18} className="group-hover:scale-110 transition-transform" />
                 </button>
                 <button 
-                  onClick={() => console.log('Supprimer:', truck._id)}
-                  className="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2"
+                  onClick={() => handleDelete(truck._id)}
+                  className="p-2 bg-gray-700/50 hover:bg-red-500/20 border border-gray-600 hover:border-red-500 text-gray-400 hover:text-red-500 rounded-lg transition-all duration-300 group"
+                  title="Supprimer"
                 >
-                  <Trash2 size={18} />
-                  Supprimer
+                  <Trash2 size={18} className="group-hover:scale-110 transition-transform" />
                 </button>
               </div>
             </div>
           ))}
         </div>
       </div>
+
+      {/* Modal Create/Edit Truck */}
+      {isModalOpen && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+          <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-700">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-6 border-b border-gray-700">
+              <h2 className="text-2xl font-bold text-white">
+                {isEditing ? 'Modifier le' : 'Ajouter un'} <span className="text-orange-500">Camion</span>
+              </h2>
+              <button
+                onClick={closeModal}
+                className="text-gray-400 hover:text-white transition-colors"
+              >
+                <X size={24} />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-6">
+              {/* Error Message */}
+              {formError && (
+                <div className="mb-4 bg-red-500/20 border border-red-500 rounded-lg p-4 flex items-start">
+                  <AlertCircle className="text-red-400 mr-3 flex-shrink-0 mt-0.5" size={20} />
+                  <p className="text-red-400">{formError}</p>
+                </div>
+              )}
+
+              <div className="space-y-5">
+                {/* Matricule */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Matricule *
+                  </label>
+                  <input
+                    type="text"
+                    name="matricule"
+                    value={formData.matricule}
+                    onChange={handleChange}
+                    required
+                    placeholder="Ex: ABC-1234"
+                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                  />
+                </div>
+
+                {/* Marque */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Marque *
+                  </label>
+                  <input
+                    type="text"
+                    name="marque"
+                    value={formData.marque}
+                    onChange={handleChange}
+                    required
+                    placeholder="Ex: Mercedes, Volvo, Scania"
+                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                  />
+                </div>
+
+                {/* Kilométrage */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Kilométrage (km)
+                  </label>
+                  <input
+                    type="number"
+                    name="kilometrage"
+                    value={formData.kilometrage}
+                    onChange={handleChange}
+                    placeholder="0"
+                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                  />
+                </div>
+
+                {/* Capacité Carburant */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Capacité Carburant (L)
+                  </label>
+                  <input
+                    type="number"
+                    name="carburantCapacity"
+                    value={formData.carburantCapacity}
+                    onChange={handleChange}
+                    placeholder="Ex: 400"
+                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                  />
+                </div>
+
+                {/* Status */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                    Statut
+                  </label>
+                  <select
+                    name="status"
+                    value={formData.status}
+                    onChange={handleChange}
+                    className="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent transition-all"
+                  >
+                    <option value="disponible">Disponible</option>
+                    <option value="en route">En Route</option>
+                    <option value="maintenance">Maintenance</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Modal Footer */}
+            <div className="flex gap-3 p-6 border-t border-gray-700">
+              <button
+                onClick={closeModal}
+                disabled={formLoading}
+                className="flex-1 px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                Annuler
+              </button>
+              <button
+                onClick={handleSubmit}
+                disabled={formLoading}
+                className="flex-1 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
+              >
+                {formLoading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
+                    <span>{isEditing ? 'Mise à jour...' : 'Création...'}</span>
+                  </>
+                ) : (
+                  <span>{isEditing ? 'Mettre à jour' : 'Créer le Camion'}</span>
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
