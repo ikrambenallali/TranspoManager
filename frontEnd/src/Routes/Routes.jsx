@@ -4,6 +4,7 @@ import DriverDashboard from "../components/Driver/DriverDashboard.jsx";
 import Home from "../components/Home.jsx";
 import CreateDriver from "../components/Admin/createDriver.jsx";
 import Trucks from "../components/Admin/Trucks.jsx";
+import Trailers from "../components/Admin/Trailers.jsx";
 
 function AppRoutes() {
     return (
@@ -13,6 +14,7 @@ function AppRoutes() {
             <Route path="/DriverDashboard" element={<DriverDashboard />} />
             <Route path="/CreateDriver" element={<CreateDriver />} />
             <Route path="/Trucks" element={<Trucks />} />
+            <Route path="/trailers" element={<Trailers />} />
 
         </Routes>
     );
