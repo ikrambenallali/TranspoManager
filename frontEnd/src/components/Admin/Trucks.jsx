@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Truck, Gauge, Fuel, CheckCircle, Navigation, Wrench, Plus, Edit, Trash2, X } from 'lucide-react';
+import { Truck, Gauge, Fuel, CheckCircle, Navigation, Wrench, Plus, Edit, Trash2, X, AlertCircle } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
-import { fetchTrucks ,createTruck ,deleteTruck } from '../../features/truckSlice';
+import { fetchTrucks, createTruck, deleteTruck, updateTruck } from '../../features/truckSlice';
 
 function Trucks() {
   const dispatch = useDispatch();
@@ -17,8 +17,9 @@ function Trucks() {
 
   const [formError, setFormError] = useState('');
   const [formLoading, setFormLoading] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [editingId, setEditingId] = useState(null);
 
- 
   useEffect(() => {
     dispatch(fetchTrucks());
   }, [dispatch]);
@@ -27,36 +28,101 @@ function Trucks() {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const openCreateModal = () => {
+    setIsEditing(false);
+    setEditingId(null);
+    setFormData({
+      matricule: '',
+      marque: '',
+      kilometrage: 0,
+      carburantCapacity: 0,
+      status: 'disponible'
+    });
+    setFormError('');
+    setIsModalOpen(true);
+  };
+
+  const openEditModal = (truck) => {
+    setIsEditing(true);
+    setEditingId(truck._id);
+    setFormData({
+      matricule: truck.matricule,
+      marque: truck.marque,
+      kilometrage: truck.kilometrage,
+      carburantCapacity: truck.carburantCapacity,
+      status: truck.status
+    });
+    setFormError('');
+    setIsModalOpen(true);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setFormError('');
     setFormLoading(true);
-    const resultAction = await dispatch(createTruck(formData));
-    if (createTruck.fulfilled.match(resultAction)) {
-      // Success
-      setFormData({
-        matricule: '',
-        marque: '',
-        kilometrage: 0,
-        carburantCapacity: 0,
-        status: 'disponible'
-      });
-      setIsModalOpen(false);
 
-      // Refresh truck list
-      dispatch(fetchTrucks());
+    if (isEditing) {
+      const resultAction = await dispatch(
+        updateTruck({ id: editingId, truckData: formData })
+      );
+
+      if (updateTruck.fulfilled.match(resultAction)) {
+        setIsModalOpen(false);
+        setIsEditing(false);
+        setEditingId(null);
+        setFormData({
+          matricule: '',
+          marque: '',
+          kilometrage: 0,
+          carburantCapacity: 0,
+          status: 'disponible'
+        });
+        dispatch(fetchTrucks());
+      } else {
+        setFormError(resultAction.payload || "Erreur lors de la mise à jour");
+      }
     } else {
-      // Error
-      setFormError(resultAction.payload || 'Erreur lors de la création');
+      const resultAction = await dispatch(createTruck(formData));
+      
+      if (createTruck.fulfilled.match(resultAction)) {
+        setFormData({
+          matricule: '',
+          marque: '',
+          kilometrage: 0,
+          carburantCapacity: 0,
+          status: 'disponible'
+        });
+        setIsModalOpen(false);
+        dispatch(fetchTrucks());
+      } else {
+        setFormError(resultAction.payload || 'Erreur lors de la création');
+      }
     }
 
     setFormLoading(false);
   };
 
-const handleDelete = (id) => {
-    dispatch(deleteTruck(id));
-};
+  const handleDelete = async (id) => {
+    if (window.confirm('Êtes-vous sûr de vouloir supprimer ce camion ?')) {
+      await dispatch(deleteTruck(id));
+      dispatch(fetchTrucks());
+    }
+  };
+
+  const closeModal = () => {
+    setIsModalOpen(false);
+    setIsEditing(false);
+    setEditingId(null);
+    setFormError('');
+    setFormData({
+      matricule: '',
+      marque: '',
+      kilometrage: 0,
+      carburantCapacity: 0,
+      status: 'disponible'
+    });
+  };
+
   if (loading) return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center">
       <div className="text-center">
@@ -102,7 +168,7 @@ const handleDelete = (id) => {
             <p className="text-gray-400">Gestion et suivi de tous nos camions</p>
           </div>
           <button 
-            onClick={() => setIsModalOpen(true)}
+            onClick={openCreateModal}
             className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
           >
             <Plus size={20} />
@@ -158,21 +224,21 @@ const handleDelete = (id) => {
                 </div>
               </div>
 
-              {/* Actions Buttons */}
-              <div className="mt-4 pt-4 border-t border-gray-700 flex gap-2">
+            {/* Actions Buttons */}
+              <div className="mt-4 pt-4 border-t border-gray-700 flex gap-2 justify-end">
                 <button 
-                  onClick={() => console.log('Modifier:', truck._id)}
-                  className="flex-1 bg-blue-500 hover:bg-blue-600 text-white py-2 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2"
+                  onClick={() => openEditModal(truck)}
+                  className="p-2 bg-gray-700/50 hover:bg-orange-500/20 border border-gray-600 hover:border-orange-500 text-gray-400 hover:text-orange-500 rounded-lg transition-all duration-300 group"
+                  title="Modifier"
                 >
-                  <Edit size={18} />
-                  Modifier
+                  <Edit size={18} className="group-hover:scale-110 transition-transform" />
                 </button>
                 <button 
                   onClick={() => handleDelete(truck._id)}
-                  className="flex-1 bg-red-500 hover:bg-red-600 text-white py-2 rounded-lg font-medium transition-all duration-300 transform hover:scale-105 flex items-center justify-center gap-2"
+                  className="p-2 bg-gray-700/50 hover:bg-red-500/20 border border-gray-600 hover:border-red-500 text-gray-400 hover:text-red-500 rounded-lg transition-all duration-300 group"
+                  title="Supprimer"
                 >
-                  <Trash2 size={18} />
-                  Supprimer
+                  <Trash2 size={18} className="group-hover:scale-110 transition-transform" />
                 </button>
               </div>
             </div>
@@ -180,17 +246,17 @@ const handleDelete = (id) => {
         </div>
       </div>
 
-      {/* Modal Create Truck */}
+      {/* Modal Create/Edit Truck */}
       {isModalOpen && (
         <div className="fixed inset-0 bg-black/70 backdrop-blur-sm flex items-center justify-center z-50 p-4">
           <div className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto border border-gray-700">
             {/* Modal Header */}
             <div className="flex items-center justify-between p-6 border-b border-gray-700">
               <h2 className="text-2xl font-bold text-white">
-                Ajouter un <span className="text-orange-500">Camion</span>
+                {isEditing ? 'Modifier le' : 'Ajouter un'} <span className="text-orange-500">Camion</span>
               </h2>
               <button
-                onClick={() => setIsModalOpen(false)}
+                onClick={closeModal}
                 className="text-gray-400 hover:text-white transition-colors"
               >
                 <X size={24} />
@@ -199,6 +265,14 @@ const handleDelete = (id) => {
 
             {/* Modal Body */}
             <div className="p-6">
+              {/* Error Message */}
+              {formError && (
+                <div className="mb-4 bg-red-500/20 border border-red-500 rounded-lg p-4 flex items-start">
+                  <AlertCircle className="text-red-400 mr-3 flex-shrink-0 mt-0.5" size={20} />
+                  <p className="text-red-400">{formError}</p>
+                </div>
+              )}
+
               <div className="space-y-5">
                 {/* Matricule */}
                 <div>
@@ -284,16 +358,25 @@ const handleDelete = (id) => {
             {/* Modal Footer */}
             <div className="flex gap-3 p-6 border-t border-gray-700">
               <button
-                onClick={() => setIsModalOpen(false)}
-                className="flex-1 px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-lg transition-all duration-300"
+                onClick={closeModal}
+                disabled={formLoading}
+                className="flex-1 px-6 py-3 bg-gray-700 hover:bg-gray-600 text-white font-semibold rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Annuler
               </button>
               <button
                 onClick={handleSubmit}
-                className="flex-1 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105"
+                disabled={formLoading}
+                className="flex-1 px-6 py-3 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg transition-all duration-300 transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none flex items-center justify-center gap-2"
               >
-                Créer le Camion
+                {formLoading ? (
+                  <>
+                    <div className="animate-spin rounded-full h-5 w-5 border-t-2 border-b-2 border-white"></div>
+                    <span>{isEditing ? 'Mise à jour...' : 'Création...'}</span>
+                  </>
+                ) : (
+                  <span>{isEditing ? 'Mettre à jour' : 'Créer le Camion'}</span>
+                )}
               </button>
             </div>
           </div>

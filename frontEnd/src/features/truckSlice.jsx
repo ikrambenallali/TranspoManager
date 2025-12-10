@@ -36,6 +36,17 @@ export const deleteTruck = createAsyncThunk(
         }
     }
 )
+export const updateTruck = createAsyncThunk(
+    "truck/updateTruck",
+    async ({id,truckData},{rejectWithValue})=>{
+        try{
+            const res=await api.put(`/trucks/${id}`,truckData);
+            return res.data;
+        }catch(err){
+            return rejectWithValue(err.response?.data?.msg || "Erreur lors de la mise à jour du camion");
+        }
+    }
+)
 const truckSlice =createSlice({
     name:"truck",
     initialState:{
@@ -81,6 +92,20 @@ const truckSlice =createSlice({
         state.trucks=state.trucks.filter(t=>t._id!==action.payload);
     })
     .addCase(deleteTruck.rejected,(state,action)=>{
+        state.loading=false;
+        state.error=action.payload;
+    })
+
+    // update
+    .addCase(updateTruck.pending,(state)=>{
+        state.loading=true;
+    })
+    .addCase(updateTruck.fulfilled,(state,action)=>{
+        state.loading=false;
+        const updatedTruck = action.payload;
+        state.trucks=state.trucks.map(t=>t._id===updatedTruck._id ? updatedTruck : t);  
+    })
+    .addCase(updateTruck.rejected,(state,action)=>{
         state.loading=false;
         state.error=action.payload;
     })
