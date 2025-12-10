@@ -5,7 +5,9 @@ import mongoose from 'mongoose';
 import authRoutes from './Routes/authRoutes.js';
 import userRoutes from './Routes/userRoutes.js';
 import truckRoutes from './Routes/truckRoute.js';
-import trailerRoutes from './Routes/trailerRoute.js';   
+import trailerRoutes from './Routes/trailerRoute.js';
+import tireRoutes from './Routes/tireRoutes.js';   
+import fuelRoutes from './Routes/fuelRoutes.js';
 import errorHandler from './middlewares/errorHandling.js';
 
 
@@ -26,6 +28,8 @@ app.use('/api/auth', authRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/trucks', truckRoutes);
 app.use('/api/trailer', trailerRoutes);
+app.use('/api/tires', tireRoutes);
+app.use('/api/fuel', fuelRoutes);
 
 // Test route
 app.get('/', (req, res) => {
