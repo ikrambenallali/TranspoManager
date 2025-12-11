@@ -4,7 +4,12 @@ import Tire from '../Models/Tire.js';
 export const createTire = async (req, res, next) => {
     try {
         const { truck, trailer, position, etat, dateInstallation } = req.body;
-
+           // 👉 Validation logique
+        if ((truck && trailer) || (!truck && !trailer)) {
+            const error = new Error("Un pneu doit être attaché soit à un camion soit à une remorque, mais pas les deux.");
+            error.statusCode = 400;
+            return next(error);
+        }
         const existPosition = await Tire.findOne({ position, truck, trailer });
         if (existPosition) {
             const error = new Error("This position already has a tire for the specified truck or trailer.");
@@ -13,8 +18,8 @@ export const createTire = async (req, res, next) => {
         }
 
         const newTire = new Tire({
-            truck,
-            trailer,
+            truck:truck || null,
+            trailer:trailer || null,
             position,
             etat,
             dateInstallation,
@@ -35,7 +40,7 @@ export const createTire = async (req, res, next) => {
 // get all tires
 export const getAllTires = async (req, res, next) => {
     try {
-        const tires = await Tire.find();
+        const tires = await Tire.find().populate("truck", "matricule").populate("trailer", "matricule");
         res.status(200).json({ msg: "voici tout les pneus", sucess: true, data: tires });
 
     } catch (error) {
