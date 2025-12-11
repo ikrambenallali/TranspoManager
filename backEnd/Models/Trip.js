@@ -15,7 +15,7 @@ const tripSchema = new mongoose.Schema({
   kilometrageArrivee: Number,
   carburantDepart: Number,
   carburantArrivee: Number,
-  remarks: { type: String ,required: false},
+  remarks: { type: String ,required: false ,default:null},
 }, { timestamps: true });
 
 export default mongoose.model('Trip', tripSchema);
