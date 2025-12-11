@@ -3,14 +3,17 @@ import FuelLog from '../Models/FuelLog.js';
 // create FuelLog 
 export  const createFuelLog = async (req, res, next) => {
     try {
-        const { truck, trailer, date, volume, kilometrage } = req.body;
+        const { truck, trailer, driver, date, volume, kilometrageDepart, kilometrageArrivee, remarques } = req.body;
 
         const newFuelLog = new FuelLog({
             truck,
             trailer,
+            driver,
             date,
             volume,
-            kilometrage,
+            kilometrageDepart,
+            kilometrageArrivee,
+            remarques
         });
 
         await newFuelLog.save();
