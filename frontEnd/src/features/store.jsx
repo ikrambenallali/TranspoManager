@@ -2,6 +2,8 @@ import { configureStore } from "@reduxjs/toolkit";
 import authReducer from "./authSlice.jsx";
 import userReducer from "./userSlice.jsx";
 import truckReducer from"./truckSlice.jsx";
+import trailerReducer from"./trailerSlice.jsx";
+import tireReducer from "./tireSlice.jsx";
 
 
 
@@ -10,6 +12,8 @@ const store = configureStore({
         auth: authReducer,
         user: userReducer,
         truck:truckReducer,
+        trailer:trailerReducer,
+        tire:tireReducer,
   },
 });
 export    {store} ;   
