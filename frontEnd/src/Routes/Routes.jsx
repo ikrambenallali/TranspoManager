@@ -7,6 +7,7 @@ import Trucks from "../components/Admin/Trucks.jsx";
 import Trailers from "../components/Admin/Trailers.jsx";
 import Tires from "../components/Admin/Tires.jsx";
 import Notifications from "../components/Notification.jsx";
+import AdminDashboard from "../components/Admin/AdminDashboard.jsx";
 
 function AppRoutes() {
     return (
@@ -19,6 +20,7 @@ function AppRoutes() {
             <Route path="/trailers" element={<Trailers />} />
             <Route path="/tires" element={<Tires />} />
             <Route path="/notifications" element={<Notifications />} />
+            <Route path="/admin" element={<AdminDashboard />} />
 
         </Routes>
     );
