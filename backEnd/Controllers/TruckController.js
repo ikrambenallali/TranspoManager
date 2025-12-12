@@ -1,4 +1,6 @@
 import Truck from '../Models/Truck.js';
+import maintenanceEmitter from "../utils/maintenanceEmitter.js";
+
 
 // create truck
 export const createTruck = async (req, res, next) => {
@@ -97,15 +99,30 @@ export const deleteTruck = async (req, res, next) => {
 
 
 // update truck
+// update truck
 export const updateTruck = async (req, res, next) => {
     try {
         const id = req.params.id;
 
-        const updated = await Truck.findByIdAndUpdate(id, req.body, { new: true });
-        if (!updated) {
+        const oldTruck = await Truck.findById(id);
+        if (!oldTruck) {
             const error = new Error("Truck not found");
             error.statusCode = 404;
             return next(error);
+        }
+
+        // sauvegarde de l'ancien kilométrage
+        const oldKm = oldTruck.kilometrage;
+
+        const updated = await Truck.findByIdAndUpdate(id, req.body, { new: true });
+
+        // 🔥 Vérifier si le kilométrage a été changé
+        if (req.body.kilometrage && req.body.kilometrage !== oldKm) {
+            maintenanceEmitter.emit("check_maintenance", {
+                targetType: "truck",
+                targetId: updated._id,
+                currentKm: req.body.kilometrage
+            });
         }
 
         res.status(200).json({
@@ -118,5 +135,6 @@ export const updateTruck = async (req, res, next) => {
         next(error);
     }
 };
+
 
 export default { createTruck, getAllTrucks, getTruckById, deleteTruck, updateTruck };

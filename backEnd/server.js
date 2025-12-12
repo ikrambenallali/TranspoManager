@@ -12,6 +12,10 @@ import tripRoutes from './Routes/tripRoutes.js';
 import maintenanceRuleRoutes from './Routes/maintenanceRuleRoutes.js';
 import maintenanceRecordRoutes from './Routes/maintenanceRecordRoutes.js';
 import errorHandler from './middlewares/errorHandling.js';
+import "./listeners/maintenanceListener.js";
+import notificationRoutes from "./Routes/notificationRoutes.js";
+
+
 
 
 import cors from "cors";
@@ -37,6 +41,8 @@ app.use('/api/fuel', fuelRoutes);
 app.use('/api/trips', tripRoutes);
 app.use('/api/maintenanceRules', maintenanceRuleRoutes);
 app.use('/api/maintenanceRecords', maintenanceRecordRoutes);
+app.use("/api/notifications", notificationRoutes);
+
 
 // Test route
 app.get('/', (req, res) => {
