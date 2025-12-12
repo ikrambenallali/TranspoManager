@@ -159,3 +159,22 @@ export const deleteTrip = async (req, res, next) => {
         next(error);
     }
 };
+
+// update status
+export const updateTripStatus = async (req, res, next) => {
+    try {
+        const id = req.params.id;
+        const { status } = req.body;
+        const updatedTrip = await Trip.findByIdAndUpdate(id, { status }, { new: true });
+        if (!updatedTrip) {
+            const error = new Error("Trip not found");
+            error.statusCode = 404;
+            return next(error);
+        }
+        res.status(200).json({ msg: "Trip status updated successfully", success: true, data: updatedTrip });
+    } catch (error) {
+        next(error);
+    }       
+};
+
+
