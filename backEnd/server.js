@@ -9,6 +9,8 @@ import trailerRoutes from './Routes/trailerRoute.js';
 import tireRoutes from './Routes/tireRoutes.js';   
 import fuelRoutes from './Routes/fuelRoutes.js';
 import tripRoutes from './Routes/tripRoutes.js';
+import maintenanceRuleRoutes from './Routes/maintenanceRuleRoutes.js';
+import maintenanceRecordRoutes from './Routes/maintenanceRecordRoutes.js';
 import errorHandler from './middlewares/errorHandling.js';
 
 
@@ -33,6 +35,8 @@ app.use('/api/trailer', trailerRoutes);
 app.use('/api/tires', tireRoutes);
 app.use('/api/fuel', fuelRoutes);
 app.use('/api/trips', tripRoutes);
+app.use('/api/maintenanceRules', maintenanceRuleRoutes);
+app.use('/api/maintenanceRecords', maintenanceRecordRoutes);
 
 // Test route
 app.get('/', (req, res) => {
