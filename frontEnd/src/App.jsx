@@ -6,7 +6,6 @@ import Navbar from "./components/layouts/Navbar";
 import Footer from "./components/layouts/Footer";
 
 function App() {
-  console.log("Store:", store.getState());
 
   return (
     <div className="flex flex-col min-h-screen">
