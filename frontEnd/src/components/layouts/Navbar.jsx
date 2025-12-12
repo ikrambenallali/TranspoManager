@@ -20,7 +20,7 @@ function Navbar() {
 
             {/* Desktop Menu */}
             <div className="hidden md:flex space-x-8">
-              <a href="#accueil" className="text-white hover:text-orange-400 transition-colors duration-300 font-medium">
+              {/* <a href="#accueil" className="text-white hover:text-orange-400 transition-colors duration-300 font-medium">
                 Accueil
               </a>
               <a href="#services" className="text-white hover:text-orange-400 transition-colors duration-300 font-medium">
@@ -34,7 +34,7 @@ function Navbar() {
               </a>
               <a href="#contact" className="text-white hover:text-orange-400 transition-colors duration-300 font-medium">
                 Contact
-              </a>
+              </a> */}
             </div>
 
             {/* CTA Button */}
