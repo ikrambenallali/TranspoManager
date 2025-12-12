@@ -13,6 +13,7 @@ import errorHandler from './middlewares/errorHandling.js';
 
 
 import cors from "cors";
+import { isAdmin, isAuthenticated } from './middlewares/auth.js';
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -26,7 +27,7 @@ app.use(express.json());
 
 // Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/users', userRoutes);
+app.use('/api/users',isAuthenticated,isAdmin, userRoutes);
 app.use('/api/trucks', truckRoutes);
 app.use('/api/trailer', trailerRoutes);
 app.use('/api/tires', tireRoutes);
