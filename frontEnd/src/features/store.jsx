@@ -19,7 +19,7 @@ const store = configureStore({
         tire:tireReducer,
         notifications: notificationReducer,
         fuelLog:fuelLogReducer,
-        trip:tripReducer
+      trips: tripReducer
 
   },
 });
