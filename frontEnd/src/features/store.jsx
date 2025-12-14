@@ -6,6 +6,8 @@ import trailerReducer from"./trailerSlice.jsx";
 import tireReducer from "./tireSlice.jsx";
 import tripReducer from "./tripSlice.jsx";
 import fuelLogReducer from "./fuelLogSlice.jsx";
+import maintenanceRuleReducer from "./maintenanceRuleSlice.jsx";
+import maintenanceRecordReducer from "./maintenanceRecordSlice.jsx";
 import notificationReducer from "./notificationSlice.jsx";
 
 
@@ -19,7 +21,9 @@ const store = configureStore({
         tire:tireReducer,
         notifications: notificationReducer,
         fuelLog:fuelLogReducer,
-      trips: tripReducer
+      trips: tripReducer,
+      maintenanceRule:maintenanceRuleReducer,
+      maintenanceRecord:maintenanceRecordReducer
 
   },
 });
