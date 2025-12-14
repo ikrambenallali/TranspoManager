@@ -28,7 +28,7 @@ function Auth() {
     }, [loading, token, navigate]);
 
     return (
-        <div className="w-[110%] min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center px-4 py-12">
+        <div className=" min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center px-4 py-12">
             <div className="max-w-md w-full">
                 {/* Logo / Header */}
                 <div className="text-center mb-8">

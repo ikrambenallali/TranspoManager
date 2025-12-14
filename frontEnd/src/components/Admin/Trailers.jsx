@@ -151,7 +151,7 @@ function Trailers() {
   };
 
   return (
-    <div className="w-[110%] min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black py-12 px-4 sm:px-6 lg:px-8">
+    <div className=" min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black py-12 px-4 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         {/* Header avec bouton Créer */}
         <div className="flex flex-col md:flex-row justify-between items-center mb-8">
