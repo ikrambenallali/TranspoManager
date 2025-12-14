@@ -1,5 +1,8 @@
 import MaintenanceRecord from '../Models/MaintenanceRecord.js';
 import MaintenanceRule from '../Models/MaintenanceRule.js';
+import Tire from '../Models/Tire.js';
+import Trailer from '../Models/Trailer.js';
+import Truck from '../Models/Truck.js';
 
 // Create a new maintenance record
 export const createMaintenanceRecord = async (req, res, next) => {
@@ -34,15 +37,35 @@ export const createMaintenanceRecord = async (req, res, next) => {
 
 // Get all maintenance records
 export const getMaintenanceRecords = async (req, res, next) => {
-    try {
-        const records = await MaintenanceRecord.find()
-            .populate("rule")
-            .sort({ performedAt: -1 });
+  try {
+    const records = await MaintenanceRecord.find()
+      .populate("rule")
+      .sort({ performedAt: -1 })
+      .lean(); // lean pour transformer en objet JS
 
-        res.status(200).json(records);
-    } catch (error) {
-        next(error);
-    }
+    // Ajouter le matricule de la cible
+    const recordsWithMatricule = await Promise.all(
+      records.map(async (rec) => {
+        let targetDoc = null;
+        if (rec.targetType === "truck") {
+          targetDoc = await Truck.findById(rec.targetId).select("matricule");
+        } else if (rec.targetType === "trailer") {
+          targetDoc = await Trailer.findById(rec.targetId).select("matricule");
+        } else if (rec.targetType === "tire") {
+          targetDoc = await Tire.findById(rec.targetId).select("position");
+        }
+
+        return {
+          ...rec,
+          targetMatricule: targetDoc ? targetDoc.matricule : "N/A"
+        };
+      })
+    );
+
+    res.status(200).json(recordsWithMatricule);
+  } catch (error) {
+    next(error);
+  }
 };
 
 // Get maintenance records for a specific target

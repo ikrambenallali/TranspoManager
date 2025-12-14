@@ -11,6 +11,7 @@ import AdminDashboard from "../components/Admin/AdminDashboard.jsx";
 import FuelLogs from "../components/Admin/FuelLog.jsx";
 import Trips from "../components/Admin/Trips.jsx";
 import MaintenanceRules from "../components/Admin/MaintenanceRules.jsx";
+import MaintenanceRecords from "../components/Admin/MaintenanceRecords.jsx";
 
 function AppRoutes() {
     return (
@@ -25,6 +26,7 @@ function AppRoutes() {
             <Route path="/trips" element={<Trips />} />
             <Route path="/fuelLogs" element={<FuelLogs />}></Route>
             <Route path="/maintenanceRules" element={<MaintenanceRules   />} />
+            <Route path="/maintenanceRecords" element={<MaintenanceRecords   />} />
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/admin" element={<AdminDashboard />} />
 
