@@ -32,7 +32,7 @@ export  const createFuelLog = async (req, res, next) => {
 // get all FuelLogs
 export const getAllFuelLogs = async (req, res, next) => {
     try {
-        const fuelLogs = await FuelLog.find();
+        const fuelLogs = await FuelLog.find().populate('truck').populate('driver', 'fullname').populate('trip');
         res.status(200).json({
             msg: "Liste de tous les FuelLogs",
             success: true,
