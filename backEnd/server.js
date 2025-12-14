@@ -33,11 +33,11 @@ app.use(express.json());
 
 // Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/users',isAuthenticated,isAdmin, userRoutes);
+app.use('/api/users', userRoutes);
 app.use('/api/trucks', truckRoutes);
 app.use('/api/trailer', trailerRoutes);
 app.use('/api/tires', tireRoutes);
-app.use('/api/fuel', fuelRoutes);
+app.use('/api/fuelLogs', fuelRoutes);
 app.use('/api/trips', tripRoutes);
 app.use('/api/maintenanceRules', maintenanceRuleRoutes);
 app.use('/api/maintenanceRecords', maintenanceRecordRoutes);

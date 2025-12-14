@@ -98,7 +98,10 @@ function AdminDashboard() {
       default: return <Clock size={16} className="text-gray-500" />;
     }
   };
-
+ const logout = () => {
+        localStorage.removeItem("token");
+        window.location.href = "/login";
+      };
   return (
     <div className="w-[110%] flex h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black overflow-hidden">
       
@@ -143,10 +146,11 @@ function AdminDashboard() {
 
         {/* Logout Button */}
         <div className="p-4 border-t border-gray-700">
-          <button className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/20 rounded-lg transition-all duration-300">
+         <button onClick={logout} className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/20 rounded-lg transition-all duration-300">
             <LogOut size={20} />
             {sidebarOpen && <span className="font-medium">Déconnexion</span>}
           </button>
+        
         </div>
       </aside>
 

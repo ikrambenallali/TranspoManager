@@ -49,4 +49,14 @@ export const createDriver = async (req, res) => {
 
     }
 }
-export default { createDriver };
+
+// get all users
+export const getAllUsers = async (req, res) => {
+    try {
+        const users = await User.find();
+        res.status(200).json({ msg: "All users", users });
+    } catch (error) {
+        res.status(500).json({ msg: "Server error" });
+    }
+}
+export default { createDriver , getAllUsers };

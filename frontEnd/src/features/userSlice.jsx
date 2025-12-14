@@ -13,9 +13,25 @@ export const createDriver = createAsyncThunk(
         }       
     }
 );
+export const fetchDrivers = createAsyncThunk(
+    "users/fetchDrivers",
+     async (_,{rejectWithValue})=>{
+        try{
+            const res = await api.get("/users");
+            console.log(res);
+            return res.data;
+        }catch (err){
+         return rejectWithValue(err.response?.data?.msg || "Erreur lors de la récupération des camions");
+        }
+     }
+)
+
+ 
+
 const userSlice = createSlice({
 name: "user",
 initialState:{
+    users:[],
     user: null,
     loading: false,
     error: null,
@@ -34,7 +50,20 @@ extraReducers: (builder) => {
         .addCase(createDriver.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload;
-        });
+        })
+        // get all driver
+        .addCase(fetchDrivers.pending, (state) => {
+            state.loading = true;
+            state.error = null;
+        })
+        .addCase(fetchDrivers.fulfilled, (state, action) => {
+            state.loading = false;
+            state.users = action.payload.users;
+        })
+        .addCase(fetchDrivers.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        })
 },
 
 })
