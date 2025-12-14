@@ -4,7 +4,7 @@ import { Truck, Package, MapPin, Clock, ArrowRight, CheckCircle } from 'lucide-r
 function Home() {
   return (
     <section
-      className="relative w-[110%] min-h-screen bg-cover bg-center overflow-hidden"
+      className="relative  min-h-screen bg-cover bg-center overflow-hidden"
       style={{ backgroundImage: "url('/photo1.jpg')" }}
     >
       {/* Overlay sombre pour améliorer la lisibilité */}

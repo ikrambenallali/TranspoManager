@@ -12,6 +12,8 @@ import FuelLogs from "../components/Admin/FuelLog.jsx";
 import Trips from "../components/Admin/Trips.jsx";
 import MaintenanceRules from "../components/Admin/MaintenanceRules.jsx";
 import MaintenanceRecords from "../components/Admin/MaintenanceRecords.jsx";
+import Admin from "../pages/Admin.jsx";
+import Drivers from "../components/Admin/drivers.jsx";
 
 function AppRoutes() {
     return (
@@ -28,7 +30,8 @@ function AppRoutes() {
             <Route path="/maintenanceRules" element={<MaintenanceRules   />} />
             <Route path="/maintenanceRecords" element={<MaintenanceRecords   />} />
             <Route path="/notifications" element={<Notifications />} />
-            <Route path="/admin" element={<AdminDashboard />} />
+            <Route path="/admin" element={<Admin />} />
+            <Route path="/users" element={<Drivers />} />
 
         </Routes>
     );
