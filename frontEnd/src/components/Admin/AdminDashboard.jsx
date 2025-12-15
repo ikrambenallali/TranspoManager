@@ -22,8 +22,8 @@ import {
 } from 'lucide-react';
 
 function AdminDashboard() {
-  const [sidebarOpen, setSidebarOpen] = useState(true);
-  const [activeMenu, setActiveMenu] = useState('dashboard');
+//   const [sidebarOpen, setSidebarOpen] = useState(true);
+//   const [activeMenu, setActiveMenu] = useState('dashboard');
 
   // Données de démonstration
   const stats = [
@@ -70,16 +70,16 @@ function AdminDashboard() {
     { id: 3, type: 'Pneus', vehicle: 'DEF-5555', dueDate: '2024-12-18', priority: 'high' }
   ];
 
-  const menuItems = [
-    { id: 'dashboard', label: 'Tableau de Bord', icon: <LayoutDashboard size={20} /> },
-    { id: 'trucks', label: 'Camions', icon: <Truck size={20} /> },
-    { id: 'trailers', label: 'Remorques', icon: <Container size={20} /> },
-    { id: 'tires', label: 'Pneus', icon: <CircleDot size={20} /> },
-    { id: 'routes', label: 'Trajets', icon: <Route size={20} /> },
-    { id: 'drivers', label: 'Chauffeurs', icon: <Users size={20} /> },
-    { id: 'reports', label: 'Rapports', icon: <FileText size={20} /> },
-    { id: 'settings', label: 'Paramètres', icon: <Settings size={20} /> }
-  ];
+//   const menuItems = [
+//     { id: 'dashboard', label: 'Tableau de Bord', icon: <LayoutDashboard size={20} /> },
+//     { id: 'trucks', label: 'Camions', icon: <Truck size={20} /> },
+//     { id: 'trailers', label: 'Remorques', icon: <Container size={20} /> },
+//     { id: 'tires', label: 'Pneus', icon: <CircleDot size={20} /> },
+//     { id: 'routes', label: 'Trajets', icon: <Route size={20} /> },
+//     { id: 'drivers', label: 'Chauffeurs', icon: <Users size={20} /> },
+//     { id: 'Rapport', label: 'Rapports', icon: <FileText size={20} /> },
+//     { id: 'settings', label: 'Paramètres', icon: <Settings size={20} /> }
+//   ];
 
   const getPriorityColor = (priority) => {
     switch (priority) {

@@ -10,7 +10,7 @@ function FuelLogs() {
   const dispatch = useDispatch();
   const { fuels, loading, error } = useSelector((state) => state.fuelLog);
   const { trucks } = useSelector((state) => state.truck);
-  const { trips } = useSelector((state) => state.trip);
+  const { trips } = useSelector((state) => state.trips); 
   const { users } = useSelector((state) => state.user);
   console.log(users);
   

@@ -245,6 +245,19 @@ function Trips() {
   };
 console.log("CURRENT USER :", currentUser);
 console.log("ROLE :", currentUser?.role);
+const visibleTrips = React.useMemo(() => {
+  if (!Array.isArray(trips)) return [];
+
+  if (isAdmin) return trips;
+
+  if (isDriver && currentUser?.id) {
+    return trips.filter(
+      (trip) => String(trip.driver?._id) === String(currentUser.id)
+    );
+  }
+  return [];
+}, [trips, isAdmin, isDriver, currentUser]);
+
 
   if (loading) return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center">
@@ -285,7 +298,7 @@ console.log("ROLE :", currentUser?.role);
 
         {/* Trips Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {Array.isArray(trips) && trips.map((trip) => (
+{visibleTrips.map((trip) => (
             <div
               key={trip._id}
               className="bg-gradient-to-br from-gray-800 to-gray-900 rounded-xl p-6 border border-gray-700 hover:border-orange-500 transition-all duration-300 transform hover:scale-105 hover:shadow-2xl"
@@ -400,15 +413,18 @@ console.log("ROLE :", currentUser?.role);
                       </span>
                     </div>
                   )}
- {/* telecharger pdf */}
+{/* télécharger pdf */}
+{isDriver && (
   <button
-      onClick={() => dispatch(downloadTripPdf(trip._id))}
-      disabled={pdfLoading}
-      className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-3 py-2 rounded-lg disabled:opacity-50"
-    >
-      <FileText size={16} />
-      {pdfLoading ? "Téléchargement..." : "PDF"}
-    </button>
+    onClick={() => dispatch(downloadTripPdf(trip._id))}
+    disabled={pdfLoading}
+    className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-3 py-2 rounded-lg disabled:opacity-50"
+  >
+    <FileText size={16} />
+    {pdfLoading ? "Téléchargement..." : "PDF"}
+  </button>
+)}
+
                   {/* Remarques */}
                   {trip.remarks && (
                     <div className="mt-2 p-2 bg-gray-700/50 rounded-lg">

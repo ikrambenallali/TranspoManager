@@ -1,14 +1,13 @@
 import React, { useState } from 'react';
-import {
-  Truck, Container, CircleDot, Route, FileText,
-  Users, Wrench, Fuel, Menu, X, LogOut
-} from 'lucide-react';
-import { MENU_BY_ROLE } from '../constants/sidebarMenu';
+import { Route, Fuel, Menu, X, LogOut, Truck } from 'lucide-react';
 
-function Sidebar({ activeMenu, setActiveMenu, role = 'driver' }) {
+function DriverSidebar({ activeMenu, setActiveMenu }) {
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
-  const menuItems = MENU_BY_ROLE[role] || [];
+  const menuItems = [
+    { id: 'trips', label: 'Mes Trajets', icon: <Route size={20} /> },
+    { id: 'fuelLogs', label: 'Carburant', icon: <Fuel size={20} /> },
+  ];
 
   const logout = () => {
     localStorage.removeItem("token");
@@ -16,16 +15,13 @@ function Sidebar({ activeMenu, setActiveMenu, role = 'driver' }) {
   };
 
   return (
-    <aside className={`${sidebarOpen ? 'w-64' : 'w-20'} 
-      bg-gradient-to-b from-gray-800 to-gray-900 
-      border-r border-gray-700 transition-all duration-300 flex flex-col`}>
-
+    <aside className={`${sidebarOpen ? 'w-64' : 'w-20'} bg-gray-900 transition-all flex flex-col`}>
+      
       {/* Header */}
-      <div className="p-4 border-b border-gray-700 flex items-center justify-between">
+      <div className="p-4 flex justify-between items-center border-b border-gray-700">
         {sidebarOpen && (
           <div className="flex items-center gap-2 text-white font-bold">
-            <Truck />
-            {role === 'admin' ? 'Admin Panel' : 'Driver Panel'}
+            <Truck /> Driver
           </div>
         )}
         <button onClick={() => setSidebarOpen(!sidebarOpen)} className="text-gray-400">
@@ -39,24 +35,21 @@ function Sidebar({ activeMenu, setActiveMenu, role = 'driver' }) {
           <button
             key={item.id}
             onClick={() => setActiveMenu(item.id)}
-            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all
-              ${activeMenu === item.id
-                ? 'bg-orange-500 text-white'
+            className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg
+              ${activeMenu === item.id 
+                ? 'bg-orange-500 text-white' 
                 : 'text-gray-400 hover:bg-gray-700'
               }`}
           >
             {item.icon}
-            {sidebarOpen && <span>{item.label}</span>}
+            {sidebarOpen && item.label}
           </button>
         ))}
       </nav>
 
       {/* Logout */}
       <div className="p-4 border-t border-gray-700">
-        <button
-          onClick={logout}
-          className="w-full flex items-center gap-3 px-4 py-3 text-red-400 hover:bg-red-500/20 rounded-lg"
-        >
+        <button onClick={logout} className="w-full flex items-center gap-3 text-red-400">
           <LogOut />
           {sidebarOpen && 'Déconnexion'}
         </button>
@@ -65,4 +58,4 @@ function Sidebar({ activeMenu, setActiveMenu, role = 'driver' }) {
   );
 }
 
-export default Sidebar;
+export default DriverSidebar;
