@@ -1,3 +1,6 @@
+import FuelLog from '../Models/FuelLog.js';
+import MaintenanceRecord from '../Models/MaintenanceRecord.js';
+import Trip from '../Models/Trip.js';
 import Truck from '../Models/Truck.js';
 import maintenanceEmitter from "../utils/maintenanceEmitter.js";
 
@@ -137,4 +140,50 @@ export const updateTruck = async (req, res, next) => {
 };
 
 
-export default { createTruck, getAllTrucks, getTruckById, deleteTruck, updateTruck };
+// rapport
+export const getFleetReport = async (req, res, next) => {
+  try {
+    const trucks = await Truck.find();
+
+    const report = await Promise.all(
+      trucks.map(async (truck) => {
+        const trips = await Trip.find({ truck: truck._id });
+
+        const totalKilometrage = trips.reduce((sum, trip) => {
+          if (trip.kilometrageDepart != null && trip.kilometrageArrivee != null) {
+            return sum + (trip.kilometrageArrivee - trip.kilometrageDepart);
+          }
+          return sum;
+        }, 0);
+// console.log(totalKilometrage);
+const totalFuel = await FuelLog.aggregate([
+  { $match: { truck: truck._id } },
+  { $group: { _id: null, total: { $sum: "$volume" } } } // <-- ici, volume au lieu de quantity
+]);
+
+  const maintenanceCount = await MaintenanceRecord.countDocuments({
+  targetType: 'truck',
+  targetId: truck._id
+});
+
+
+        return {
+          truckId: truck._id,
+          matricule: truck.matricule,
+          totalKilometrage,
+          totalFuel: totalFuel[0]?.total || 0,
+          maintenanceCount
+        };
+      })
+    );
+
+    res.status(200).json({
+      success: true,
+      data: report
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+export default { createTruck, getAllTrucks, getTruckById, deleteTruck, updateTruck ,getFleetReport };

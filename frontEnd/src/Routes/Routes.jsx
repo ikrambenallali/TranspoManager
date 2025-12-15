@@ -14,6 +14,7 @@ import MaintenanceRules from "../components/Admin/MaintenanceRules.jsx";
 import MaintenanceRecords from "../components/Admin/MaintenanceRecords.jsx";
 import Admin from "../pages/Admin.jsx";
 import Drivers from "../components/Admin/drivers.jsx";
+import Rapport from "../components/Admin/Rapport.jsx";
 
 function AppRoutes() {
     return (
@@ -32,6 +33,7 @@ function AppRoutes() {
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/users" element={<Drivers />} />
+            <Route path="/Rapport" element={<Rapport />} />
             <Route path="/driverDashboard" element={<DriverDashboard />} />
 
         </Routes>
