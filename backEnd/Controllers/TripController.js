@@ -1,4 +1,5 @@
 import Trip from "../Models/Trip.js";
+import pdfGenerator from "../utils/pdfGenerator.js";
 
 const adminFields = [
     "title",
@@ -177,6 +178,33 @@ export const updateTripStatus = async (req, res, next) => {
     } catch (error) {
         next(error);
     }       
+};
+
+// pdf
+export const generatePdf = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const trip = await Trip.findById(id)
+      .populate('driver', 'fullname')
+      .populate('truck')
+      .populate('trailer');
+
+    if (!trip) {
+      const error = new Error("Trip not found");
+      error.statusCode = 404;
+      return next(error);
+    }
+
+    // Génération PDF
+    const pdfBuffer = await pdfGenerator(trip); // doit retourner un Buffer
+
+    res.setHeader('Content-Type', 'application/pdf');
+    res.setHeader('Content-Disposition', `attachment; filename=trip_${trip._id}.pdf`);
+    res.send(pdfBuffer);
+
+  } catch (error) {
+    next(error);
+  }
 };
 
 

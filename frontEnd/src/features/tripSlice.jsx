@@ -83,6 +83,35 @@ export const deleteTrip = createAsyncThunk(
   }
 );
 
+// pdf 
+export const downloadTripPdf = createAsyncThunk(
+  "trips/downloadPdf",
+  async (tripId, { rejectWithValue }) => {
+    try {
+      const response = await api.get(`/trips/${tripId}/pdf`, {
+        responseType: "blob", // OBLIGATOIRE
+      });
+
+      // Création du fichier PDF
+      const blob = new Blob([response.data], { type: "application/pdf" });
+      const url = window.URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = `trip_${tripId}.pdf`;
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+
+      window.URL.revokeObjectURL(url);
+
+      return true;
+    } catch (error) {
+      return rejectWithValue("Erreur téléchargement PDF");
+    }
+  }
+);
+
 /* =========================
    SLICE
 ========================= */
@@ -92,6 +121,7 @@ const tripSlice = createSlice({
   initialState: {
     trips: [],
     currentTrip: null,
+    pdfLoading: false,
     loading: false,
     error: null,
   },
@@ -162,6 +192,17 @@ const tripSlice = createSlice({
         state.trips = state.trips.filter(
           (trip) => trip._id !== action.payload
         );
+      })
+    //   pdf
+     .addCase(downloadTripPdf.pending, (state) => {
+        state.pdfLoading = true;
+      })
+      .addCase(downloadTripPdf.fulfilled, (state) => {
+        state.pdfLoading = false;
+      })
+      .addCase(downloadTripPdf.rejected, (state, action) => {
+        state.pdfLoading = false;
+        state.error = action.payload;
       });
   },
 });
