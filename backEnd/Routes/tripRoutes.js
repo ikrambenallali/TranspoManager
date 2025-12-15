@@ -14,6 +14,9 @@ router.put('/:id',isAuthenticated, tripController.updateTrip);
 // Delete Trip
 router.delete('/:id', tripController.deleteTrip); 
 // Update Trip Status
-router.put('/:id/status', isAuthenticated, tripController.updateTripStatus);        //   
+router.put('/:id/status', isAuthenticated, tripController.updateTripStatus); 
+// pdf
+router.get('/:id/pdf', tripController.generatePdf);
+
 
 export default router;

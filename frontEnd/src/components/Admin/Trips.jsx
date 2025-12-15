@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Truck, Calendar, MapPin, Plus, Edit, Trash2, X, AlertCircle, User, Navigation, Gauge, Fuel } from 'lucide-react';
+import { Truck, Calendar, MapPin, Plus, Edit, Trash2, X, AlertCircle, User, Navigation, Gauge, Fuel, FileText } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchTrips, createTrip, deleteTrip, updateTrip, updateTripStatus } from '../../features/tripSlice';
 import { fetchTrucks } from '../../features/truckSlice';
 import { fetchtrailers } from '../../features/trailerSlice';
 import { fetchDrivers } from '../../features/userSlice';
 import { loadUser } from "../../features/authSlice";
+import {downloadTripPdf } from '../../features/tripSlice';
 
 
 function Trips() {
   const dispatch = useDispatch();
-  const { trips, loading, error } = useSelector((state) => state.trips);
+  const { trips, loading, error,pdfLoading  } = useSelector((state) => state.trips);
   const { trucks } = useSelector((state) => state.truck);
   const { trailers } = useSelector((state) => state.trailer);
   const { users } = useSelector((state) => state.user);
@@ -399,7 +400,15 @@ console.log("ROLE :", currentUser?.role);
                       </span>
                     </div>
                   )}
-
+ {/* telecharger pdf */}
+  <button
+      onClick={() => dispatch(downloadTripPdf(trip._id))}
+      disabled={pdfLoading}
+      className="flex items-center gap-2 bg-orange-500 hover:bg-orange-600 text-white px-3 py-2 rounded-lg disabled:opacity-50"
+    >
+      <FileText size={16} />
+      {pdfLoading ? "Téléchargement..." : "PDF"}
+    </button>
                   {/* Remarques */}
                   {trip.remarks && (
                     <div className="mt-2 p-2 bg-gray-700/50 rounded-lg">
