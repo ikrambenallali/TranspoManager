@@ -32,6 +32,7 @@ function AppRoutes() {
             <Route path="/notifications" element={<Notifications />} />
             <Route path="/admin" element={<Admin />} />
             <Route path="/users" element={<Drivers />} />
+            <Route path="/driverDashboard" element={<DriverDashboard />} />
 
         </Routes>
     );
