@@ -4,6 +4,11 @@ import Trailer from '../Models/Trailer.js';
 export const createTrailer = async (req, res, next) => {
     try {
         const { matricule, type, capacity, status } = req.body;
+        if (!matricule || !type || !capacity || !status) {
+            return res.status(400).json({
+                msg: "Tous les champs sont obligatoires"
+            });
+        }
 
         const existMatricule = await Trailer.findOne({ matricule });
         if (existMatricule) {
