@@ -1,54 +1,69 @@
-import react from 'react';
-import { useState } from "react";
-import { Menu, X } from 'lucide-react';
+import React, { useState } from "react";
+import { Menu, Truck, X, LogOut } from "lucide-react";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../../features/authSlice"; 
+import { useNavigate } from "react-router-dom";
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
 
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  const { user, token } = useSelector((state) => state.auth);
+  const isAuthenticated = !!token;
+
+  const handleLogout = () => {
+    dispatch(logout());
+    navigate("/login");
+  };
 
   return (
-    <nav className="w-[100%] top-0  left-0 right-0 z-50">
-      <div className="bg-gradient-to-b from-black/70 to-transparent backdrop-blur-sm">
+    <nav className="w-full top-0 left-0 right-0 z-50">
+      <div className="bg-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-20">
+            
             {/* Logo */}
-            <div className="flex-shrink-0">
-              <h1 className="text-3xl font-bold text-white tracking-wider">
-                TRANSPO<span className="text-orange-500">MANAGER</span>
-              </h1>
+            <div className="flex-shrink-0 flex items-center gap-3 group cursor-pointer">
+              <div className="bg-gradient-to-br from-orange-500 to-red-500 p-2.5 rounded-xl group-hover:scale-110 transition-transform duration-300 shadow-lg shadow-orange-500/30">
+                <Truck size={28} className="text-white" />
+              </div>
+              <div>
+                <h1 className="text-2xl font-bold text-white tracking-tight leading-none">
+                  TRANSPO<span className="text-orange-500">MANAGER</span>
+                </h1>
+                <p className="text-xs text-gray-400 tracking-wide">
+                  Gestion de Transport
+                </p>
+              </div>
             </div>
 
-            {/* Desktop Menu */}
-            <div className="hidden md:flex space-x-8">
-              {/* <a href="#accueil" className="text-white hover:text-orange-400 transition-colors duration-300 font-medium">
-                Accueil
-              </a>
-              <a href="#services" className="text-white hover:text-orange-400 transition-colors duration-300 font-medium">
-                Services
-              </a>
-              <a href="#flotte" className="text-white hover:text-orange-400 transition-colors duration-300 font-medium">
-                Notre Flotte
-              </a>
-              <a href="#apropos" className="text-white hover:text-orange-400 transition-colors duration-300 font-medium">
-                À Propos
-              </a>
-              <a href="#contact" className="text-white hover:text-orange-400 transition-colors duration-300 font-medium">
-                Contact
-              </a> */}
-            </div>
-
-            {/* CTA Button */}
+            {/* Desktop CTA */}
             <div className="hidden md:block">
-              <a href="/login"className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105">
-                Login
-              </a>
+              {isAuthenticated ? (
+                <button
+                  onClick={handleLogout}
+                  className="flex items-center gap-2 bg-orange-500  text-white px-6 py-2 rounded-lg font-semibold transition-all"
+                >
+                  <LogOut size={18} />
+                  Logout
+                </button>
+              ) : (
+                <a
+                  href="/login"
+                  className="bg-orange-500  text-white px-6 py-2 rounded-lg font-semibold transition-all"
+                >
+                  Login
+                </a>
+              )}
             </div>
 
-            {/* Mobile menu button */}
+            {/* Mobile button */}
             <div className="md:hidden">
               <button
                 onClick={() => setIsOpen(!isOpen)}
-                className="text-white hover:text-orange-400 transition-colors"
+                className="text-white hover:text-orange-400"
               >
                 {isOpen ? <X size={28} /> : <Menu size={28} />}
               </button>
@@ -59,25 +74,23 @@ function Navbar() {
         {/* Mobile Menu */}
         {isOpen && (
           <div className="md:hidden bg-black/90 backdrop-blur-md">
-            <div className="px-2 pt-2 pb-3 space-y-1">
-              <a href="#accueil" className="block px-3 py-2 text-white hover:text-orange-400 hover:bg-orange-500/10 rounded-md transition-all">
-                Accueil
-              </a>
-              <a href="#services" className="block px-3 py-2 text-white hover:text-orange-400 hover:bg-orange-500/10 rounded-md transition-all">
-                Services
-              </a>
-              <a href="#flotte" className="block px-3 py-2 text-white hover:text-orange-400 hover:bg-orange-500/10 rounded-md transition-all">
-                Notre Flotte
-              </a>
-              <a href="#apropos" className="block px-3 py-2 text-white hover:text-orange-400 hover:bg-orange-500/10 rounded-md transition-all">
-                À Propos
-              </a>
-              <a href="#contact" className="block px-3 py-2 text-white hover:text-orange-400 hover:bg-orange-500/10 rounded-md transition-all">
-                Contact
-              </a>
-              <button className="w-full mt-2 bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg font-semibold transition-all">
-                Devis Gratuit
-              </button>
+            <div className="px-2 pt-2 pb-3 space-y-2">
+              
+              {!isAuthenticated ? (
+                <a
+                  href="/login"
+                  className="block text-center bg-orange-500 hover:bg-orange-600 text-white px-6 py-2 rounded-lg font-semibold"
+                >
+                  Login
+                </a>
+              ) : (
+                <button
+                  onClick={handleLogout}
+                  className="w-full bg-red-500 hover:bg-red-600 text-white px-6 py-2 rounded-lg font-semibold"
+                >
+                  Logout
+                </button>
+              )}
             </div>
           </div>
         )}
@@ -85,4 +98,5 @@ function Navbar() {
     </nav>
   );
 }
+
 export default Navbar;
