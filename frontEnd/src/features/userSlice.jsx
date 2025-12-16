@@ -18,7 +18,7 @@ export const fetchDrivers = createAsyncThunk(
      async (_,{rejectWithValue})=>{
         try{
             const res = await api.get("/users");
-            console.log(res);
+            // console.log(res);
             return res.data;
         }catch (err){
          return rejectWithValue(err.response?.data?.msg || "Erreur lors de la récupération des camions");

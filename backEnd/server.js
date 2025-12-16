@@ -33,14 +33,14 @@ app.use(express.json());
 
 // Routes
 app.use('/api/auth', authRoutes);
-app.use('/api/users',isAuthenticated, isAdmin, userRoutes);
-app.use('/api/trucks',isAuthenticated, isAdmin, truckRoutes);
-app.use('/api/trailer',isAuthenticated, isAdmin, trailerRoutes);
-app.use('/api/tires',isAuthenticated, isAdmin, tireRoutes);
+app.use('/api/users',isAuthenticated, userRoutes);
+app.use('/api/trucks',isAuthenticated, truckRoutes);
+app.use('/api/trailer',isAuthenticated, trailerRoutes);
+app.use('/api/tires',isAuthenticated, tireRoutes);
 app.use('/api/fuelLogs',isAuthenticated, fuelRoutes);
 app.use('/api/trips',isAuthenticated, tripRoutes);
-app.use('/api/maintenanceRules',isAuthenticated, isAdmin, maintenanceRuleRoutes);
-app.use('/api/maintenanceRecords',isAuthenticated, isAdmin, maintenanceRecordRoutes);
+app.use('/api/maintenanceRules',isAuthenticated, maintenanceRuleRoutes);
+app.use('/api/maintenanceRecords',isAuthenticated, maintenanceRecordRoutes);
 app.use("/api/notifications", notificationRoutes);
 
 
