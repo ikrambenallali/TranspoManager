@@ -243,8 +243,7 @@ function Trips() {
       default: return status;
     }
   };
-console.log("CURRENT USER :", currentUser);
-console.log("ROLE :", currentUser?.role);
+
 const visibleTrips = React.useMemo(() => {
   if (!Array.isArray(trips)) return [];
 

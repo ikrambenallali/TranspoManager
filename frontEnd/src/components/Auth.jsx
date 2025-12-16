@@ -9,7 +9,7 @@ function Auth() {
     const dispatch = useDispatch();
 
     // Redux state
-    const { loading, error, token } = useSelector((state) => state.auth);
+    const { loading, error, token ,user } = useSelector((state) => state.auth);
 
     // Local states 
     const [email, setEmail] = useState("");
@@ -21,11 +21,15 @@ function Auth() {
     };
 
     // 🟢 Redirection sécurisée
-    useEffect(() => {
-        if (!loading && token) {
-            navigate("/DriverDashboard");
-        }
-    }, [loading, token, navigate]);
+  useEffect(() => {
+  if (!loading && token && user) {
+    if (user.role === "admin") {
+      navigate("/admin");
+    } else if (user.role === "driver") {
+      navigate("/driver");
+    }
+  }
+}, [loading, token, user, navigate]);
 
     return (
         <div className=" min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black flex items-center justify-center px-4 py-12">
