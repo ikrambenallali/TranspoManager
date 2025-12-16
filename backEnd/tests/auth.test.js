@@ -1,72 +1,109 @@
-// import request from "supertest";
-// import mongoose from "mongoose";
-// import { MongoMemoryServer } from "mongodb-memory-server";
-// import bcrypt from "bcryptjs";
-// import app from "../index.js";
-// import User from "../Models/User.js";
+import { jest } from "@jest/globals";
 
-// let mongoServer;
+// variables d'env
+process.env.JWT_SECRET = "testsecret";
 
-// beforeAll(async () => {
-//   mongoServer = await MongoMemoryServer.create();
-//   const uri = mongoServer.getUri();
-//   await mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true });
-// });
+// ===== MOCKS (ESM) =====
+await jest.unstable_mockModule("../Models/User.js", () => ({
+  default: {
+    findOne: jest.fn()
+  }
+}));
 
-// afterAll(async () => {
-//   await mongoose.disconnect();
-//   await mongoServer.stop();
-// });
+await jest.unstable_mockModule("bcryptjs", () => ({
+  default: {
+    compare: jest.fn()
+  }
+}));
 
-// afterEach(async () => {
-//   await User.deleteMany();
-// });
+await jest.unstable_mockModule("jsonwebtoken", () => ({
+  default: {
+    sign: jest.fn()
+  }
+}));
 
-// describe("Auth API", () => {
+// ===== IMPORTS APRÈS MOCKS =====
+const { default: User } = await import("../Models/User.js");
+const bcrypt = (await import("bcryptjs")).default;
+const jwt = (await import("jsonwebtoken")).default;
+const { login, logout } = await import("../controllers/authController.js");
 
-//   it("should login successfully with correct credentials", async () => {
-//     const password = await bcrypt.hash("password123", 10);
-//     const user = await User.create({
-//       fullname: "Alice",
-//       email: "alice@example.com",
-//       password,
-//       role: "user"
-//     });
+// ===== UTILS =====
+const mockResponse = () => {
+  const res = {};
+  res.status = jest.fn().mockReturnValue(res);
+  res.json = jest.fn().mockReturnValue(res);
+  return res;
+};
 
-//     const res = await request(app)
-//       .post("/auth/login")
-//       .send({ email: "alice@example.com", password: "password123" });
+// ===== TESTS =====
+describe("Auth Controller - login", () => {
+  test("should return 404 if user not found", async () => {
+    User.findOne.mockResolvedValue(null);
 
-//     expect(res.statusCode).toBe(200);
-//     expect(res.body.token).toBeDefined();
-//     expect(res.body.user.email).toBe("alice@example.com");
-//   });
+    const req = {
+      body: { email: "test@test.com", password: "123456" }
+    };
+    const res = mockResponse();
 
-//   it("should fail login with incorrect password", async () => {
-//     const password = await bcrypt.hash("password123", 10);
-//     await User.create({ fullname: "Bob", email: "bob@example.com", password, role: "user" });
+    await login(req, res);
 
-//     const res = await request(app)
-//       .post("/auth/login")
-//       .send({ email: "bob@example.com", password: "wrongpassword" });
+    expect(res.status).toHaveBeenCalledWith(404);
+    expect(res.json).toHaveBeenCalledWith({ msg: "User not found." });
+  });
 
-//     expect(res.statusCode).toBe(400);
-//     expect(res.body.msg).toBe("Invalid password");
-//   });
+  test("should return 400 if password is invalid", async () => {
+    User.findOne.mockResolvedValue({ password: "hashed" });
+    bcrypt.compare.mockResolvedValue(false);
 
-//   it("should fail login with non-existing user", async () => {
-//     const res = await request(app)
-//       .post("/auth/login")
-//       .send({ email: "nonexist@example.com", password: "password123" });
+    const req = {
+      body: { email: "test@test.com", password: "wrong" }
+    };
+    const res = mockResponse();
 
-//     expect(res.statusCode).toBe(404);
-//     expect(res.body.msg).toBe("User not found.");
-//   });
+    await login(req, res);
 
-//   it("should logout successfully", async () => {
-//     const res = await request(app).post("/auth/logout");
-//     expect(res.statusCode).toBe(200);
-//     expect(res.body.message).toBe("Logout successful");
-//   });
+    expect(res.status).toHaveBeenCalledWith(400);
+    expect(res.json).toHaveBeenCalledWith({ msg: "Invalid password" });
+  });
 
-// });
+  test("should login successfully", async () => {
+    User.findOne.mockResolvedValue({
+      _id: "123",
+      fullname: "John Doe",
+      email: "john@test.com",
+      role: "admin",
+      password: "hashed"
+    });
+
+    bcrypt.compare.mockResolvedValue(true);
+    jwt.sign.mockReturnValue("fake-token");
+
+    const req = {
+      body: { email: "john@test.com", password: "123456" }
+    };
+    const res = mockResponse();
+
+    await login(req, res);
+
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({
+      msg: "User logged in successfully",
+      token: "fake-token",
+      user: {
+        fullname: "John Doe",
+        email: "john@test.com",
+        role: "admin"
+      }
+    });
+  });
+});
+
+describe("Auth Controller - logout", () => {
+  test("should logout successfully", () => {
+    const res = { json: jest.fn() };
+    logout({}, res);
+
+    expect(res.json).toHaveBeenCalledWith({ message: "Logout successful" });
+  });
+});
