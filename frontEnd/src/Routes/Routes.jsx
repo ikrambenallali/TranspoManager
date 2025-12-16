@@ -1,4 +1,5 @@
 import { Routes, Route } from "react-router-dom";
+import ProtectedRoute from "./ProtectedRoute";
 import Auth from "../components/Auth.jsx";
 import DriverDashboard from "../components/Driver/DriverDashboard.jsx";
 import Home from "../components/Home.jsx";
@@ -7,7 +8,6 @@ import Trucks from "../components/Admin/Trucks.jsx";
 import Trailers from "../components/Admin/Trailers.jsx";
 import Tires from "../components/Admin/Tires.jsx";
 import Notifications from "../components/Notification.jsx";
-import AdminDashboard from "../components/Admin/AdminDashboard.jsx";
 import FuelLogs from "../components/Admin/FuelLog.jsx";
 import Trips from "../components/Admin/Trips.jsx";
 import MaintenanceRules from "../components/Admin/MaintenanceRules.jsx";
@@ -16,29 +16,41 @@ import Admin from "../pages/Admin.jsx";
 import Drivers from "../components/Admin/drivers.jsx";
 import Rapport from "../components/Admin/Rapport.jsx";
 import Driver from "../pages/Driver.jsx";
+import Page403 from "../pages/Paga403.jsx";
 
 function AppRoutes() {
     return (
         <Routes>
+
+            {/* Public */}
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Auth />} />
-            <Route path="/DriverDashboard" element={<DriverDashboard />} />
-            <Route path="/CreateDriver" element={<CreateDriver />} />
-            <Route path="/Trucks" element={<Trucks />} />
-            <Route path="/trailers" element={<Trailers />} />
-            <Route path="/tires" element={<Tires />} />
-            <Route path="/trips" element={<Trips />} />
-            <Route path="/fuelLogs" element={<FuelLogs />}></Route>
-            <Route path="/maintenanceRules" element={<MaintenanceRules   />} />
-            <Route path="/maintenanceRecords" element={<MaintenanceRecords   />} />
-            <Route path="/notifications" element={<Notifications />} />
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/users" element={<Drivers />} />
-            <Route path="/Rapport" element={<Rapport />} />
-            <Route path="/driver" element={<Driver />} />
-            <Route path="/driverDashboard" element={<DriverDashboard />} />
+            <Route path="/page403" element={<Page403 />} />
+
+            {/* ADMIN */}
+            <Route element={<ProtectedRoute rolesAllowed={["admin"]} />}>
+                <Route path="/admin" element={<Admin />} />
+                <Route path="/createDriver" element={<CreateDriver />} />
+                <Route path="/trucks" element={<Trucks />} />
+                <Route path="/trailers" element={<Trailers />} />
+                <Route path="/tires" element={<Tires />} />
+                <Route path="/trips" element={<Trips />} />
+                <Route path="/fuelLogs" element={<FuelLogs />} />
+                <Route path="/maintenanceRules" element={<MaintenanceRules />} />
+                <Route path="/maintenanceRecords" element={<MaintenanceRecords />} />
+                <Route path="/users" element={<Drivers />} />
+                <Route path="/rapport" element={<Rapport />} />
+            </Route>
+
+            {/* DRIVER */}
+            <Route element={<ProtectedRoute rolesAllowed={["driver"]} />}>
+                <Route path="/driver" element={<Driver />} />
+                <Route path="/driverDashboard" element={<DriverDashboard />} />
+                <Route path="/notifications" element={<Notifications />} />
+            </Route>
 
         </Routes>
     );
 }
+
 export default AppRoutes;
