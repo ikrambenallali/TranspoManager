@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchDrivers } from '../../features/userSlice';
+import { Link } from 'react-router-dom';
+
 import { User, Mail, Calendar, Shield, Search, AlertCircle, Loader } from 'lucide-react';
 
 function Drivers() {
@@ -56,13 +58,11 @@ function Drivers() {
             />
           </div>
           <div>
-            <a href="/createDriver">
-            <button
-                        className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 flex items-center gap-2"
-
-            >
-                creer un chauffeur</button>
-                </a>
+           <Link to="/admin/createDriver">
+  <button className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 flex items-center gap-2">
+    créer un chauffeur
+  </button>
+</Link>
           </div>
         </div>
 

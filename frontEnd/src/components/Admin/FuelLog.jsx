@@ -362,7 +362,7 @@ function FuelLogs() {
                     <option value="">-- Aucun voyage --</option>
                     {trips?.map((trip) => (
                       <option key={trip._id} value={trip._id}>
-                        {trip.depart} → {trip.destination}
+                        {trip.title} 
                       </option>
                     ))}
                   </select>

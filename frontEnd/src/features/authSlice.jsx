@@ -29,7 +29,7 @@ const authSlice = createSlice({
     name: "auth",
     initialState: {
         user: null,
-          token: localStorage.getItem("token"), // 👈 IMPORTANT
+          token: localStorage.getItem("token"), 
 
         // token: null,
         loading: false,
