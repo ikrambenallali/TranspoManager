@@ -6,14 +6,15 @@ import {
     updateMaintenanceRule,
     deleteMaintenanceRule
 } from "../Controllers/maintenanceRuleController.js";
+import { isAdmin } from "../middlewares/auth.js";
 
 
 const router = express.Router();
 
-router.post("/", createMaintenanceRule);
+router.post("/",isAdmin, createMaintenanceRule);
 router.get("/", getMaintenanceRules);
 router.get("/:id", getMaintenanceRuleById);
-router.put("/:id", updateMaintenanceRule);
-router.delete("/:id", deleteMaintenanceRule);
+router.put("/:id",isAdmin, updateMaintenanceRule);
+router.delete("/:id",isAdmin, deleteMaintenanceRule);
 
 export default router;
