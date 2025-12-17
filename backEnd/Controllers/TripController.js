@@ -77,7 +77,7 @@ export const createTrip = async (req, res, next) => {
 export const getAllTrips = async (req, res, next) => {
     try {
         const trips = await Trip.find().populate('title').populate('driver','fullname').populate('truck').populate('trailer');
-        console.log(trips);
+        // console.log(trips);
         
         res.status(200).json({ msg: "Here are all the trips", success: true, data: trips });
     } catch (error) {
