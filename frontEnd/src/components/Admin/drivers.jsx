@@ -45,18 +45,8 @@ function Drivers() {
           </p>
         </div>
 
-        {/* SEARCH BAR */}
         <div className="mb-6 flex">
-          <div className="relative max-w-md mx-auto">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400" size={20} />
-            <input
-              type="text"
-              placeholder="Rechercher par nom ou email..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 bg-gray-800 border border-gray-700 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:border-orange-500"
-            />
-          </div>
+        
           <div>
            <Link to="/admin/createDriver">
   <button className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-300 transform hover:scale-105 flex items-center gap-2">
